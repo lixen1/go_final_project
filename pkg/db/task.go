@@ -18,11 +18,16 @@ func AddTask(task *Task) (int64, error) {
 
 	query := `INSERT INTO scheduler (date, title, comment, repeat) VALUES (:date, :title, :comment, :repeat)`
 	res, err := DB.Exec(query, sql.Named("date", task.Date), sql.Named("title", task.Title), sql.Named("comment", task.Comment), sql.Named("repeat", task.Repeat))
-	if err == nil {
-		id, err = res.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("faild to add task: %w", err)
 	}
 
-	return id, err
+	id, err = res.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("faild to retrive last insert id: %w", err)
+	}
+
+	return id, nil
 }
 
 func Tasks(limit int) ([]*Task, error) {

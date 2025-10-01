@@ -27,13 +27,11 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	id, err := db.AddTask(&task)
 	if err != nil {
-		writeError(w, "DB error: "+err.Error(), http.StatusServiceUnavailable)
+		writeError(w, "DB error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	task.ID = strconv.Itoa(int(id))
-
-	idResponse := map[string]string{"id": task.ID}
+	idResponse := map[string]string{"id": strconv.Itoa(int(id))}
 
 	if err = writeJSON(w, idResponse); err != nil {
 		writeError(w, "JSON encoding error"+err.Error(), http.StatusServiceUnavailable)
